@@ -35,6 +35,7 @@ class Venue(db.Model):
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
+    genres = db.Column(db.ARRAY(db.String))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     website = db.Column(db.String(500))
@@ -52,6 +53,7 @@ class Artist(db.Model):
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
+    genres = db.Column(db.ARRAY(db.String))
     phone = db.Column(db.String(120))
     website = db.Column(db.String(500))
     image_link = db.Column(db.String(500))
@@ -434,18 +436,19 @@ def create_artist_submission():
   error = False
 
   try:
-    artist = Artist(name = request.form['name'], city = request.form['city'], state = request.form['state'], phone = request.form['phone'], facebook_link = request.form['facebook_link'])
+    artist = Artist(name = request.form['name'], city = request.form['city'], state = request.form['state'],
+    phone = request.form['phone'], facebook_link = request.form['facebook_link'], genres = request.form.getlist('genres'))
     db.session.add(artist)
     db.session.commit()
   except:
     error = True
     db.session.rollback()
-    print(sys.exc_info())
   finally:
     db.session.close()
 
   if error:
-    flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
+    return render_template('pages/home.html')
   else:
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
     return render_template('pages/home.html') 
