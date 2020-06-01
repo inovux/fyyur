@@ -114,7 +114,17 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=data);
+  areas = db.session.query(Venue.city, Venue.state).distinct().all()
+  venues = []
+
+  for area in areas:
+    venues.append({
+      "city": area.city,
+      "state": area.state,
+      "venues": Venue.query.filter_by(city=area.city, state=area.state).all()
+    })
+
+  return render_template('pages/venues.html', areas=venues, venues=venues)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
