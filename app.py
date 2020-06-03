@@ -437,7 +437,8 @@ def create_artist_submission():
 
   try:
     artist = Artist(name = request.form['name'], city = request.form['city'], state = request.form['state'],
-    phone = request.form['phone'], facebook_link = request.form['facebook_link'], genres = request.form.getlist('genres'))
+    phone = request.form['phone'], website = request.form['website'], image_link = request.form['image_link'],
+    facebook_link = request.form['facebook_link'], genres = request.form.getlist('genres'))
     db.session.add(artist)
     db.session.commit()
   except:
