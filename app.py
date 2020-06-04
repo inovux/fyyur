@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+import sys
 from datetime import datetime
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
@@ -75,8 +76,6 @@ class Show(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
     start_time = db.Column(db.DateTime)
-
-
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -273,20 +272,31 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
-
   error = False
 
+  if 'seeking_talent' in request.form:
+    is_seeking_talent = True
+  else:
+    is_seeking_talent = False  
+
   try:
-    venue = Venue(name = request.form['name'], city = request.form['city'], state = request.form['state'],
-    phone = request.form['phone'], website = request.form['website'], image_link = request.form['image_link'],
-    facebook_link = request.form['facebook_link'], genres = request.form.getlist('genres'))
+    venue = Venue(
+    name = request.form['name'], 
+    city = request.form['city'], 
+    state = request.form['state'],
+    phone = request.form['phone'], 
+    website = request.form['website'], 
+    image_link = request.form['image_link'],
+    facebook_link = request.form['facebook_link'], 
+    genres = request.form.getlist('genres'), 
+    seeking_talent = is_seeking_talent,
+    seeking_description = request.form['seeking_description'])
     db.session.add(venue)
     db.session.commit()
   except:
     error = True
     db.session.rollback()
+    print(sys.exc_info())
   finally:
     db.session.close()
 
@@ -468,20 +478,31 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
   error = False
 
+  if 'seeking_venue' in request.form:
+    is_seeking_venue = True
+  else:
+    is_seeking_venue = False 
+
   try:
-    artist = Artist(name = request.form['name'], city = request.form['city'], state = request.form['state'],
-    phone = request.form['phone'], website = request.form['website'], image_link = request.form['image_link'],
-    facebook_link = request.form['facebook_link'], genres = request.form.getlist('genres'))
+    artist = Artist(
+    name = request.form['name'], 
+    city = request.form['city'], 
+    state = request.form['state'],
+    phone = request.form['phone'], 
+    website = request.form['website'], 
+    image_link = request.form['image_link'],
+    facebook_link = request.form['facebook_link'], 
+    genres = request.form.getlist('genres'),
+    seeking_venue = is_seeking_venue,
+    seeking_description = request.form['seeking_description'])
     db.session.add(artist)
     db.session.commit()
   except:
     error = True
     db.session.rollback()
+    print(sys.exc_info())
   finally:
     db.session.close()
 
