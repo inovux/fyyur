@@ -39,17 +39,15 @@ class Venue(db.Model):
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
-    genres = db.Column(db.ARRAY(db.String))
-    address = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
-    website = db.Column(db.String(500))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(500), nullable=False)
+    image_link = db.Column(db.String(500), nullable=False)
+    facebook_link = db.Column(db.String(120), nullable=False)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
     shows = db.relationship('Show', backref='venue')
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
 class Artist(db.Model):
@@ -68,10 +66,6 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(500))
     shows = db.relationship('Show', backref='artist')
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
     __tablename__ = 'shows'
@@ -182,7 +176,12 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+    form = VenueForm(request.form, meta={"csrf": False})
     error = False
+
+    if not form.validate():
+        flash(form.errors)
+        return redirect(url_for('create_venue_form'))
 
     if 'seeking_talent' in request.form:
         is_seeking_talent = True
@@ -286,7 +285,7 @@ def show_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-    form = ArtistForm()
+    form = ArtistForm(request.form, meta={"csrf": False})
     artist = Artist.query.get(artist_id)
     form.state.data = artist.state
     form.genres.data = artist.genres
@@ -345,7 +344,12 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
+    form = VenueForm(request.form, meta={"csrf": False})
     error = False
+
+    if not form.validate():
+        flash(form.errors)
+        return redirect(url_for('edit_venue', venue_id=venue_id))
 
     if 'seeking_talent' in request.form:
         is_seeking_talent = True
@@ -459,9 +463,6 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
-
     error = False
 
     try:
