@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-sm-6">
 		<h1 class="monospace">
-			{{ artist.name }} <a href="/artists/{{ artist.id }}/edit" title="Edit artist"><i class="fa fa-edit pull-right"></i></a>
+			{{ artist.name }} <button id="delete-artist-button" data-id="{{ artist.id }}" class="fa fa-trash pull-right delete-button"></button> <a href="/artists/{{ artist.id }}/edit" title="Edit artist"><i class="fa fa-edit pull-right"></i></a>
 		</h1>
 		<p class="subtitle">
 			ID: {{ artist.id }}

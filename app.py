@@ -443,6 +443,27 @@ def create_artist_submission():
         return render_template('pages/home.html')
 
 
+@app.route('/artists/<artist_id>', methods=['DELETE'])
+def delete_artist(artist_id):
+    error = False
+
+    try:
+        artist = Artist.query.get(artist_id)
+        db.session.delete(artist)
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+
+    if error:
+        abort(400)
+
+    return jsonify({'success': True})
+
+
 #  Shows
 #  ----------------------------------------------------------------
 
