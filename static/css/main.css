@@ -218,3 +218,7 @@ h2.monospace {
 .delete-button:hover {
   color: #eda800
 }
+.no-post-link {
+    display: table;
+    margin: 0 auto;
+}
