@@ -41,12 +41,12 @@ class Venue(db.Model):
     state = db.Column(db.String(120), nullable=False)
     genres = db.Column(db.ARRAY(db.String), nullable=False)
     address = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(120))
+    phone = db.Column(db.String(120), default='')
     website = db.Column(db.String(500), nullable=False)
     image_link = db.Column(db.String(500), nullable=False)
     facebook_link = db.Column(db.String(120), nullable=False)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
-    seeking_description = db.Column(db.String(500))
+    seeking_description = db.Column(db.String(500), nullable=False, default='')
     shows = db.relationship('Show', backref='venue')
 
 
@@ -57,13 +57,13 @@ class Artist(db.Model):
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
-    genres = db.Column(db.ARRAY(db.String))
-    phone = db.Column(db.String(120))
-    website = db.Column(db.String(500))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
+    phone = db.Column(db.String(120), default='')
+    website = db.Column(db.String(500), nullable=False)
+    image_link = db.Column(db.String(500), nullable=False)
+    facebook_link = db.Column(db.String(120), nullable=False)
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
-    seeking_description = db.Column(db.String(500))
+    seeking_description = db.Column(db.String(500), nullable=False, default='')
     shows = db.relationship('Show', backref='artist')
 
 
@@ -73,7 +73,7 @@ class Show(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
-    start_time = db.Column(db.DateTime)
+    start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
 
 # ----------------------------------------------------------------------------#
