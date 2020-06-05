@@ -209,3 +209,12 @@ h2.monospace {
 .subtitle {
   opacity: 0.5;
 }
+.delete-button {
+  cursor: pointer;
+  color: #ff8c3a;
+  background: transparent;
+  border: none;
+}
+.delete-button:hover {
+  color: #eda800
+}

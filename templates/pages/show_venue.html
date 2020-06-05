@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-sm-6">
 		<h1 class="monospace">
-			{{ venue.name }} <a href="/venues/{{ venue.id }}/edit" title="Edit venue"><i class="fa fa-edit pull-right"></i></a>
+			{{ venue.name }} <button id="delete-venue-button" data-id="{{ venue.id }}" class="fa fa-trash pull-right delete-button"></button> <a href="/venues/{{ venue.id }}/edit" title="Edit venue"><i class="fa fa-edit pull-right"></i></a>
 		</h1>
 		<p class="subtitle">
 			ID: {{ venue.id }}

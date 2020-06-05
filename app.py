@@ -7,7 +7,7 @@ import dateutil.parser
 import babel
 import sys
 from datetime import datetime
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -47,7 +47,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120), nullable=False)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500), nullable=False, default='')
-    shows = db.relationship('Show', backref='venue')
+    shows = db.relationship('Show', backref='venue', cascade="all, delete-orphan")
 
 
 class Artist(db.Model):
@@ -64,7 +64,7 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120), nullable=False)
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500), nullable=False, default='')
-    shows = db.relationship('Show', backref='artist')
+    shows = db.relationship('Show', backref='artist', cascade="all, delete-orphan")
 
 
 class Show(db.Model):
@@ -219,12 +219,23 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-    # TODO: Complete this endpoint for taking a venue_id, and using
-    # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+    error = False
 
-    # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-    # clicking that button delete it from the db then redirect the user to the homepage
-    return None
+    try:
+        venue = Venue.query.get(venue_id)
+        db.session.delete(venue)
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+
+    if error:
+        abort(400)
+
+    return jsonify({'success': True})
 
 
 #  Artists
@@ -465,9 +476,9 @@ def create_show_submission():
 
     try:
         show = Show(
-            artist_id = request.form['artist_id'],
-            venue_id = request.form['venue_id'],
-            start_time = request.form['start_time']
+            artist_id=request.form['artist_id'],
+            venue_id=request.form['venue_id'],
+            start_time=request.form['start_time']
         )
 
         db.session.add(show)
