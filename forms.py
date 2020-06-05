@@ -30,7 +30,7 @@ class VenueForm(Form):
     state = SelectField(
         'state', validators=[
             DataRequired(),
-            multiple_field_validation([choice.value for choice in States])
+            AnyOf([choice.value for choice in States])
         ],
         choices=States.choices()
     )
@@ -74,7 +74,7 @@ class ArtistForm(Form):
     state = SelectField(
         'state', validators=[
             DataRequired(),
-            multiple_field_validation([choice.value for choice in States])
+            AnyOf([choice.value for choice in States])
         ],
         choices=States.choices()
     )
