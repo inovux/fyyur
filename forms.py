@@ -3,7 +3,7 @@ from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL
 from enums import Genres, States
-from validators import multiple_field_validation
+from validators import multiple_field_validation, is_valid_phone
 
 
 class ShowForm(Form):
@@ -38,7 +38,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[DataRequired(), is_valid_phone]
     )
     genres = SelectMultipleField(
         'genres', validators=[
@@ -79,8 +79,7 @@ class ArtistForm(Form):
         choices=States.choices()
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[DataRequired(), is_valid_phone]
     )
     genres = SelectMultipleField(
         'genres', validators=[

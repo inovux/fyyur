@@ -23,6 +23,7 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
@@ -41,7 +42,7 @@ class Venue(db.Model):
     state = db.Column(db.String(120), nullable=False)
     genres = db.Column(db.ARRAY(db.String), nullable=False)
     address = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(120), default='')
+    phone = db.Column(db.String(120), nullable=False)
     website = db.Column(db.String(500), nullable=False)
     image_link = db.Column(db.String(500), nullable=False)
     facebook_link = db.Column(db.String(120), nullable=False)
@@ -58,7 +59,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
     genres = db.Column(db.ARRAY(db.String), nullable=False)
-    phone = db.Column(db.String(120), default='')
+    phone = db.Column(db.String(120), nullable=False)
     website = db.Column(db.String(500), nullable=False)
     image_link = db.Column(db.String(500), nullable=False)
     facebook_link = db.Column(db.String(120), nullable=False)
@@ -304,7 +305,12 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
+    form = ArtistForm(request.form, meta={"csrf": False})
     error = False
+
+    if not form.validate():
+        flash(form.errors)
+        return redirect(url_for('edit_artist', artist_id=artist_id))
 
     if 'seeking_venue' in request.form:
         is_seeking_venue = True
@@ -407,7 +413,12 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+    form = ArtistForm(request.form, meta={"csrf": False})
     error = False
+
+    if not form.validate():
+        flash(form.errors)
+        return redirect(url_for('create_artist_form'))
 
     if 'seeking_venue' in request.form:
         is_seeking_venue = True

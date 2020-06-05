@@ -1,4 +1,5 @@
 from wtforms.validators import ValidationError
+import re
 
 
 def multiple_field_validation(values):
@@ -14,3 +15,8 @@ def multiple_field_validation(values):
             raise ValidationError(message)
 
     return _validate
+
+
+def is_valid_phone(form, field):
+    if not re.search(r"^[0-9]{3}-[0-9]{3}-[0-9]{4}$", field.data):
+        raise ValidationError("Phone number is invalid.")
