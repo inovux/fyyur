@@ -48,3 +48,7 @@ $ python3 app.py
 ```
 
 Navigate to Home page http://localhost:5000
+
+#### TODO
+
+Add testing for all routes / practice TDD convention
